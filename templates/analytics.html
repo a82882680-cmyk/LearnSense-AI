@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block title %}Engagement Analysis{% endblock %}
+{% block content %}
+<section class="page-head">
+  <p class="eyebrow">Page 2 &middot; Engagement Analysis</p>
+  <h1>Activity is not the same as understanding</h1>
+  <p class="lead">We separate <strong>activity indicators</strong> (what a learner does) from
+    <strong>performance indicators</strong> (what a learner shows in an assessment).</p>
+</section>
+<p class="data-banner">SIMULATED SAMPLE DATA &mdash; NOT REAL STUDENT RECORDS</p>
+
+<section class="grid-2">
+  <div class="card tint-sage">
+    <h2>Activity indicators</h2>
+    <ul class="plain">
+      <li><strong>Attendance</strong> &ndash; how many sessions were attended.</li>
+      <li><strong>Assignment completion</strong> &ndash; how much assigned work was submitted.</li>
+      <li><strong>Revision activity</strong> &ndash; how many revision sessions were completed (out of 10).</li>
+    </ul>
+    <p class="muted">They show participation. They do not prove the content was understood.</p>
+  </div>
+  <div class="card tint-butter">
+    <h2>Performance indicator</h2>
+    <ul class="plain">
+      <li><strong>Quiz score</strong> &ndash; marks out of 10 in a quiz.</li>
+    </ul>
+    <p class="muted">It shows how a learner did on one quiz. One quiz is a small snapshot, so it should be read with care.</p>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Indicator comparison</h2>
+  <p class="muted">All four indicators shown as percentages (quiz and revision are out of 10, so each point is 10%).</p>
+  <div class="table-wrap">
+  <table class="table">
+    <thead><tr><th>Indicator</th><th>Type</th><th>Average</th><th>Highest</th><th>Lowest</th><th>Spread</th></tr></thead>
+    <tbody>
+    {% for r in indicators %}
+      <tr>
+        <td>{{ r.indicator }}</td>
+        <td><span class="pill {{ 'butter' if r.type=='Performance' else 'sage' }}">{{ r.type }}</span></td>
+        <td><strong>{{ r.average }}%</strong></td>
+        <td>{{ '%g' % r.highest }}% ({{ r.highest_id }})</td>
+        <td>{{ '%g' % r.lowest }}% ({{ r.lowest_id }})</td>
+        <td>{{ r.spread }} points</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Indicator-wise comparison by student</h2>
+  <p class="muted">Compare each student's activity bars with their quiz bar. Look for students where the bars do not match.</p>
+  <div class="chart-box tall"><canvas id="analyticsIndicatorChart"></canvas></div>
+  <p class="explain">For example, S04 has high attendance and revision but a low quiz bar. S05 has lower attendance but a higher quiz bar. These are observations in five sample records, not conclusions.</p>
+</section>
+
+<section class="card">
+  <h2>Activity average vs quiz performance</h2>
+  <p class="muted">Activity average = mean of attendance, assignment completion and revision percentage. The gap shows activity minus quiz percentage.</p>
+  <div class="table-wrap">
+  <table class="table">
+    <thead><tr><th>Student</th><th>Activity average</th><th>Quiz</th><th>Gap</th></tr></thead>
+    <tbody>
+    {% for s in students %}
+      <tr class="{{ 'row-flag' if s.gap_flag }}">
+        <td>{{ s.student_id }}</td><td>{{ s.activity_avg }}%</td><td>{{ '%g' % s.quiz_pct }}%</td>
+        <td>{{ '%+.1f' % s.activity_quiz_gap }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  <p class="explain">A large positive gap means a lot of activity but a lower quiz result. It is a prompt to ask a supportive question, not a verdict.</p>
+</section>
+
+<section class="card">
+  <h2>How the combined score is calculated</h2>
+  <p class="muted">Illustrative learning-progress indicator. The weights are our own experimental choice. It is <strong>not</strong> a validated measure of engagement, intelligence, learning ability or student potential.</p>
+  <p class="formula">Combined Score = (Attendance &times; {{ weights.attendance }}) + (Quiz % &times; {{ weights.quiz }}) + (Revision % &times; {{ weights.revision }}) + (Assignment completion &times; {{ weights.assignment }})</p>
+  <div class="table-wrap">
+  <table class="table">
+    <thead><tr><th>Student</th><th>Attendance</th><th>Quiz %</th><th>Revision %</th><th>Assignment</th><th>Combined</th></tr></thead>
+    <tbody>
+    {% for s in students %}
+      <tr><td>{{ s.student_id }}</td><td>{{ '%g' % s.attendance }}</td><td>{{ '%g' % s.quiz_pct }}</td>
+          <td>{{ '%g' % s.revision_pct }}</td><td>{{ '%g' % s.assignment_completion }}</td>
+          <td><strong class="hl">{{ '%.2f' % s.combined_score }}</strong></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section class="page-head sub">
+  <p class="eyebrow">Module and learner-group comparison</p>
+  <h2 class="h-serif">Comparing modules (synthetic data)</h2>
+  <p class="lead">This is a separate, <strong>made-up illustrative dataset</strong> (data/modules.csv) with four modules and three learner groups. These are not actual institutional results.</p>
+</section>
+
+<section class="card">
+  <h2>Module averages</h2>
+  <p class="muted">Averages are weighted by the number of learners in each group.</p>
+  <div class="table-wrap">
+  <table class="table">
+    <thead><tr><th>Module</th><th>Learners</th><th>Attendance</th><th>Assignments</th><th>Quiz</th><th>Revision</th></tr></thead>
+    <tbody>
+    {% for m in modules %}
+      <tr><td>{{ m.module_name }}</td><td>{{ m.learners }}</td><td>{{ m.avg_attendance }}%</td>
+          <td>{{ m.avg_assignment }}%</td><td>{{ m.avg_quiz_score }}/10</td><td>{{ m.avg_revision_sessions }}/10</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  <div class="chart-box tall"><canvas id="analyticsModuleChart"></canvas></div>
+  <h3>What the data shows</h3>
+  <ul class="plain">{% for n in module_notes %}<li>{{ n }}</li>{% endfor %}</ul>
+</section>
+
+<section class="card">
+  <h2>Learner-group averages across modules</h2>
+  <div class="table-wrap">
+  <table class="table">
+    <thead><tr><th>Group</th><th>Attendance</th><th>Assignments</th><th>Quiz</th><th>Revision</th></tr></thead>
+    <tbody>
+    {% for g in groups %}
+      <tr><td>{{ g.learner_group }}</td><td>{{ g.avg_attendance }}%</td><td>{{ g.avg_assignment }}%</td>
+          <td>{{ g.avg_quiz_pct }}%</td><td>{{ g.avg_revision_pct }}%</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  <p class="explain">Group A, B and C are invented labels. Differences between groups here do not mean any real group is better or worse.</p>
+</section>
+{% endblock %}
+{% block scripts %}<script>window.addEventListener("DOMContentLoaded", () => LS.initAnalytics());</script>{% endblock %}

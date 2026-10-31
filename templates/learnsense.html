@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block title %}LearnSense AI{% endblock %}
+{% block content %}
+<section class="page-head dark-head">
+  <p class="eyebrow light">Our innovative solution</p>
+  <h1>LearnSense AI</h1>
+  <p class="lead light">{{ project.full_solution.split('\u2014')[1].strip() }}</p>
+  <p class="lead light">{{ project.tagline }}</p>
+  <p class="honest">Honest note: the current prototype is <strong>rule-based</strong>. It is <strong>not</strong> a trained machine-learning model, and it has no measured prediction accuracy.</p>
+</section>
+
+<section class="card">
+  <h2>System workflow</h2>
+  <div class="flow">
+    <div class="flow-step now"><span>1</span>Learning session data</div>
+    <div class="flow-step now"><span>2</span>Signal analysis</div>
+    <div class="flow-step now"><span>3</span>Possible learning friction</div>
+    <div class="flow-step now"><span>4</span>Personalised recovery suggestions</div>
+    <div class="flow-step soon"><span>5</span>Follow-up assessment</div>
+    <div class="flow-step soon"><span>6</span>Next learning recommendation</div>
+  </div>
+  <div class="legend-row">
+    <span><i class="dot now"></i> Existing prototype (working)</span>
+    <span><i class="dot soon"></i> Proposed (not built or validated)</span>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Try it: analyse a learning session</h2>
+  <p class="muted">Enter the signals from one learning task, or pick a demonstration scenario. Everything is calculated by <code>logic/friction_engine.py</code>.</p>
+  <div class="scenario-row" id="scenarioRow">
+    {% for sc in scenarios %}
+    <button type="button" class="chip" data-id="{{ sc.id }}" title="{{ sc.description }}">{{ sc.name }}</button>
+    {% endfor %}
+  </div>
+  <form id="sessionForm" class="form-grid" novalidate>
+    <label>Expected task time (minutes)<input type="number" name="expected_time" min="0.5" step="0.5" value="6" required></label>
+    <label>Actual task time (minutes)<input type="number" name="actual_time" min="0" step="0.5" value="14" required></label>
+    <label>Number of attempts<input type="number" name="attempts" min="0" step="1" value="4" required></label>
+    <label>Unsuccessful attempts<input type="number" name="unsuccessful" min="0" step="1" value="4" required></label>
+    <label>Hints requested<input type="number" name="hints" min="0" step="1" value="3" required></label>
+    <div class="form-actions"><button class="btn" type="submit">ANALYSE LEARNING SESSION</button></div>
+  </form>
+  <p class="form-error" id="formError" role="alert" hidden></p>
+  <p class="muted small" id="scenarioDesc"></p>
+</section>
+
+<section class="card result" id="resultPanel" hidden aria-live="polite">
+  <div class="result-top">
+    <div class="gauge">
+      <p class="small-label">Experimental friction index</p>
+      <p class="gauge-num"><span id="indexNum">0</span><small>/100</small></p>
+      <div class="meter"><div class="meter-fill" id="meterFill"></div></div>
+      <p class="band" id="bandText"></p>
+    </div>
+    <div>
+      <h3>Interpretation</h3>
+      <p id="interpretText"></p>
+      <p class="muted small" id="disclaimerText"></p>
+    </div>
+  </div>
+
+  <h3>How each input affected the score</h3>
+  <div class="table-wrap">
+  <table class="table" id="breakdownTable">
+    <thead><tr><th>Signal</th><th>Calculation</th><th>Points</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  </div>
+
+  <h3>Signals detected</h3>
+  <ul class="plain" id="signalList"></ul>
+
+  <h3>Personalised recovery suggestions, with reasons</h3>
+  <div id="recList" class="rec-list"></div>
+</section>
+
+<section class="card">
+  <h2>How the score is built</h2>
+  <p class="muted">Rule-based and transparent. The weights were chosen by our group and are <strong>experimental</strong>.</p>
+  <div class="table-wrap">
+  <table class="table">
+    <thead><tr><th>Signal</th><th>Weight</th><th>Rule</th></tr></thead>
+    <tbody>
+      <tr><td>Completion time</td><td>{{ weights.time }}</td><td>(actual &divide; expected) &minus; 1, limited to 0&ndash;1. Double the expected time or more gives the full weight.</td></tr>
+      <tr><td>Unsuccessful attempts</td><td>{{ weights.unsuccessful }}</td><td>unsuccessful &divide; attempts. All attempts unsuccessful gives the full weight.</td></tr>
+      <tr><td>Hints requested</td><td>{{ weights.hints }}</td><td>hints &divide; 5, limited to 1.</td></tr>
+      <tr><td>Repeated attempts</td><td>{{ weights.attempts }}</td><td>(attempts &minus; 1) &divide; 5, limited to 0&ndash;1.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="formula">Index = sum of (weight &times; fraction), rounded, always kept between 0 and 100.</p>
+  <p class="explain">Suggestions use simple thresholds: time at 1.5&times; expected or more, at least 2 unsuccessful attempts making up half or more of the attempts, 3 or more hints, and a teacher check-in when two or more signals appear together or the index is 75 or above.</p>
+</section>
+
+<section class="card proposed">
+  <span class="pill coral">PROPOSED FEATURE &middot; NOT VALIDATED</span>
+  <h2>Post-intervention reassessment</h2>
+  <p class="muted">After support is given, the learner tries a similar task again. We compare the two sessions. This interface shows how the idea would work. It has <strong>not</strong> been tested experimentally.</p>
+  <form id="reassessForm" class="form-grid two" novalidate>
+    <fieldset><legend>Before support</legend>
+      <label>Expected time (min)<input type="number" name="b_expected_time" min="0.5" step="0.5" value="6"></label>
+      <label>Actual time (min)<input type="number" name="b_actual_time" min="0" step="0.5" value="14"></label>
+      <label>Attempts<input type="number" name="b_attempts" min="0" step="1" value="4"></label>
+      <label>Unsuccessful<input type="number" name="b_unsuccessful" min="0" step="1" value="4"></label>
+      <label>Hints<input type="number" name="b_hints" min="0" step="1" value="3"></label>
+      <label>Quiz score (0-10)<input type="number" name="quiz_before" min="0" max="10" step="0.5" value="4"></label>
+    </fieldset>
+    <fieldset><legend>After support</legend>
+      <label>Expected time (min)<input type="number" name="a_expected_time" min="0.5" step="0.5" value="6"></label>
+      <label>Actual time (min)<input type="number" name="a_actual_time" min="0" step="0.5" value="8"></label>
+      <label>Attempts<input type="number" name="a_attempts" min="0" step="1" value="2"></label>
+      <label>Unsuccessful<input type="number" name="a_unsuccessful" min="0" step="1" value="1"></label>
+      <label>Hints<input type="number" name="a_hints" min="0" step="1" value="1"></label>
+      <label>Quiz score (0-10)<input type="number" name="quiz_after" min="0" max="10" step="0.5" value="7"></label>
+    </fieldset>
+    <div class="form-actions wide"><button class="btn" type="submit">Compare before and after</button></div>
+  </form>
+  <p class="form-error" id="reassessError" role="alert" hidden></p>
+  <div id="reassessResult" hidden>
+    <div class="table-wrap">
+    <table class="table" id="reassessTable">
+      <thead><tr><th>Measure</th><th>Before</th><th>After</th><th>Change</th><th>Note</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    </div>
+    <p id="reassessSummary" class="explain"></p>
+    <p id="reassessNext"><strong>Possible next step:</strong> <span></span></p>
+    <p class="muted small" id="reassessDisclaimer"></p>
+  </div>
+</section>
+
+<section class="grid-2">
+  <div class="card">
+    <h2>Existing prototype</h2>
+    <ul class="plain tick">
+      <li>Signal analysis (time, attempts, unsuccessful attempts, hints)</li>
+      <li>Rule-based friction detection</li>
+      <li>Experimental friction index (0&ndash;100)</li>
+      <li>Personalised recovery suggestions</li>
+      <li>Explainable recommendations</li>
+    </ul>
+  </div>
+  <div class="card tint-coral">
+    <h2>Proposed future features</h2>
+    <ul class="plain">
+      <li>Automated follow-up assessment</li>
+      <li>Adaptive learning pathways</li>
+      <li>Trained machine-learning models</li>
+      <li>Larger-scale engagement analysis</li>
+      <li>Real-time dashboards</li>
+    </ul>
+    <p class="muted small">None of these are built yet.</p>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script id="scenarioData" type="application/json">{{ scenarios|tojson }}</script>
+<script>window.addEventListener("DOMContentLoaded", () => LS.initLearnSense());</script>
+{% endblock %}

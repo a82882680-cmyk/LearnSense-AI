@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}About the Project{% endblock %}
+{% block content %}
+<section class="page-head">
+  <p class="eyebrow">About the project</p>
+  <h1>{{ project.title }}</h1>
+  <p class="lead">{{ project.tagline }}</p>
+</section>
+
+<section class="card">
+  <dl class="facts">
+    <div><dt>Project title</dt><dd>{{ project.title }}</dd></div>
+    <div><dt>Project ID</dt><dd>{{ project.project_id }}</dd></div>
+    <div><dt>Group ID</dt><dd>{{ project.group_id }}</dd></div>
+    <div><dt>Domain</dt><dd>{{ project.domain }}</dd></div>
+    <div><dt>Innovative solution</dt><dd>{{ project.solution }}</dd></div>
+  </dl>
+</section>
+
+<section class="grid-2">
+  <div class="card">
+    <h2>Contributions</h2>
+    <ul class="team" id="teamList">
+      <li><strong>Manas Rastogi</strong><span>Problem Statement &amp; Real-World Problems</span></li>
+      <li><strong>Anushka Verma</strong><span>Project Objectives &amp; Importance</span></li>
+      <li><strong>Anas Sheikh</strong><span>Existing Solutions &amp; Research</span></li>
+      <li><strong>Anshika Patel</strong><span>Unique Solution &amp; Innovative Features</span></li>
+      <li><strong>Kaushal Kumar</strong><span>Engagement Indicators</span></li>
+      <li><strong>Shreyanshi Kumari</strong><span>Sample Data &amp; Data Analysis</span></li>
+      <li><strong>Jeevan Kumar</strong><span>AI &amp; Machine Learning Approach</span></li>
+      <li><strong>Kashish Gupta</strong><span>System Architecture &amp; Workflow</span></li>
+      <li><strong>Sneha Verma</strong><span>Sample Dashboard Design</span></li>
+      <li><strong>Ankit Kumar</strong><span>Personalized Learning Recommendations</span></li>
+      <li><strong>Ayesha Nasir</strong><span>Privacy, Fairness &amp; Limitations</span></li>
+      <li><strong>Suraj Upadhyay</strong><span>Expected Outcomes &amp; Evaluation</span></li>
+      <li><strong>Uplaksh Saxena</strong><span>Future Scope &amp; Improvements</span></li>
+      <li><strong>Vijay Pal</strong><span>PPT Structure, Visuals &amp; Quality Review</span></li>
+    </ul>
+    <h3>Add another team member</h3>
+    <form id="teamForm" class="inline-form" novalidate>
+      <input type="text" id="memberName" placeholder="Name" maxlength="60" aria-label="Member name">
+      <input type="text" id="memberRole" placeholder="Contribution" maxlength="80" aria-label="Contribution">
+      <button class="btn small" type="submit">Add</button>
+    </form>
+    <p class="form-error" id="teamError" hidden></p>
+    <p class="muted small">Added members are saved only in this browser (not on the server). To make them permanent, add them to this template.</p>
+    <button class="btn small ghost" id="clearTeam" type="button">Remove added members</button>
+  </div>
+  <div class="card">
+    <h2>Objectives</h2>
+    <ul class="plain">
+      <li>Analyse attendance, assignment completion, revision and quiz scores.</li>
+      <li>Compare modules and learner groups.</li>
+      <li>Detect possible learning friction with transparent rules.</li>
+      <li>Suggest supportive, explainable recovery steps.</li>
+      <li>Propose a follow-up assessment process.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="grid-2">
+  <div class="card">
+    <h2>Methodology</h2>
+    <ol class="plain">
+      <li>Create a small simulated dataset (CSV files).</li>
+      <li>Calculate indicators and a combined score with Pandas and NumPy.</li>
+      <li>Display results with Flask pages and Chart.js charts. Matplotlib makes Python charts.</li>
+      <li>Build rule-based friction detection in Python.</li>
+      <li>Explain every recommendation in plain language.</li>
+    </ol>
+  </div>
+  <div class="card">
+    <h2>Technologies</h2>
+    <p><span class="pill sage">HTML5</span> <span class="pill sage">CSS3</span> <span class="pill sage">Vanilla JavaScript</span> <span class="pill sage">Python</span> <span class="pill sage">Flask</span> <span class="pill sage">Pandas</span> <span class="pill sage">NumPy</span> <span class="pill sage">Chart.js</span> <span class="pill sage">Matplotlib</span> <span class="pill sage">CSV</span> <span class="pill sage">Git &amp; GitHub</span></p>
+  </div>
+</section>
+
+<section class="card tint-coral">
+  <h2>Limitations</h2>
+  <ul class="plain">
+    <li>Only five simulated students and a synthetic module dataset. Results are illustrations.</li>
+    <li>The combined score and friction index use experimental weights that are not validated.</li>
+    <li>The prototype is rule-based. It is not a trained machine-learning model.</li>
+    <li>The follow-up assessment is a proposed feature, not tested with learners.</li>
+    <li>No real-time data, login system or database yet.</li>
+  </ul>
+</section>
+{% endblock %}
+{% block scripts %}<script>window.addEventListener("DOMContentLoaded", () => LS.initAbout());</script>{% endblock %}

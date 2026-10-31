@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}LearnSense AI{% endblock %} | DA-015</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <!-- Mobile top bar (hidden on desktop) -->
+  <header class="topbar">
+    <a class="brand-mini" href="{{ url_for('home') }}">LearnSense <span>AI</span></a>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">Menu</button>
+  </header>
+
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="{{ url_for('home') }}">
+      <span class="brand-mark">LS</span>
+      <span class="brand-text">LearnSense <em>AI</em></span>
+    </a>
+    <p class="brand-sub">{{ project.title }}</p>
+    <nav>
+      <a href="{{ url_for('home') }}" class="{{ 'on' if active=='home' }}">Home Dashboard</a>
+      <a href="{{ url_for('analytics') }}" class="{{ 'on' if active=='analytics' }}">Engagement Analysis</a>
+      <a href="{{ url_for('students') }}" class="{{ 'on' if active=='students' }}">Student Data</a>
+      <a href="{{ url_for('charts') }}" class="{{ 'on' if active=='charts' }}">Data Visualisation</a>
+      <a href="{{ url_for('learnsense') }}" class="{{ 'on' if active=='learnsense' }}">LearnSense AI</a>
+      <a href="{{ url_for('responsible') }}" class="{{ 'on' if active=='responsible' }}">Responsible Data Use</a>
+      <a href="{{ url_for('about') }}" class="{{ 'on' if active=='about' }}">About the Project</a>
+    </nav>
+    <div class="side-foot">
+      <span class="tag">{{ project.project_id }}</span>
+      <span class="tag">{{ project.group_id }}</span>
+      <p>Simulated sample data. Not real student records.</p>
+    </div>
+  </aside>
+
+  <main class="content">
+    {% block content %}{% endblock %}
+    <footer class="footer">
+      <p>{{ project.title }} &middot; {{ project.project_id }} &middot; {{ project.group_id }} &middot; {{ project.domain }}</p>
+      <p>Support, not labels. Support, not punishment.</p>
+    </footer>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

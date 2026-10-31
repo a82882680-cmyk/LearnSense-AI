@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Data Visualisation{% endblock %}
+{% block content %}
+<section class="page-head">
+  <p class="eyebrow">Page 4 &middot; Data Visualisation</p>
+  <h1>What the sample data looks like</h1>
+  <p class="lead">Six interactive charts drawn with Chart.js from the dataset. Hover over a bar or point to see its value.</p>
+</section>
+<p class="data-banner">SIMULATED SAMPLE DATA &mdash; NOT REAL STUDENT RECORDS</p>
+
+<section class="chart-grid">
+  <article class="card">
+    <h2>1. Attendance vs Assignment Completion</h2>
+    <div class="chart-box"><canvas id="chartAttendance"></canvas></div>
+    <p class="explain">S01 combines high attendance (92%) with high assignment completion (85%). S05 completed 80% of assignments with 70% attendance, while S04 attended 88% of sessions but completed only 55% of assignments. Attendance alone does not tell us how much work was completed.</p>
+  </article>
+  <article class="card">
+    <h2>2. Quiz Performance Comparison</h2>
+    <div class="chart-box"><canvas id="chartQuiz"></canvas></div>
+    <p class="explain">Quiz scores range from 2/10 to 8/10. Bars in coral are below 5/10, which marks where extra support might be considered. A single quiz is only a snapshot.</p>
+  </article>
+  <article class="card">
+    <h2>3. Revision Activity vs Quiz Scores</h2>
+    <div class="chart-box"><canvas id="chartRevision"></canvas></div>
+    <p class="explain">S04 completed 9 of 10 revision sessions yet scored 3/10, while S05 completed 6 and scored 7/10. With five records we only describe this pattern. We cannot say revision causes or fails to cause higher scores.</p>
+  </article>
+  <article class="card">
+    <h2>4. Combined Learning-Progress Score</h2>
+    <div class="chart-box"><canvas id="chartCombined"></canvas></div>
+    <p class="explain">The highlighted bar is the highest score. The scores use our experimental weights (25/30/20/25) and are an illustration, not a validated measure.</p>
+  </article>
+  <article class="card">
+    <h2>5. Indicator-wise Student Comparison</h2>
+    <div class="chart-box"><canvas id="chartIndicators"></canvas></div>
+    <p class="explain">Each line is one student across the four indicators (quiz and revision as percentages). Lines that dip sharply at Quiz show a gap between activity and performance.</p>
+  </article>
+  <article class="card">
+    <h2>6. Performance Distribution</h2>
+    <div class="chart-box"><canvas id="chartDistribution"></canvas></div>
+    <p class="explain">How many students fall in each combined-score band. With five students this is only a small illustration of a distribution.</p>
+  </article>
+</section>
+
+<section class="card">
+  <h2>Python-generated charts (Matplotlib)</h2>
+  <p class="muted">The same data drawn by <code>analysis/visualisations.py</code>. These pictures are re-created every time the app starts.</p>
+  {% if images %}
+  <div class="img-grid">
+    {% for img in images %}
+    <figure><img src="{{ url_for('static', filename='images/charts/' + img) }}" alt="Matplotlib chart: {{ img.replace('_',' ').replace('.png','') }}" loading="lazy"><figcaption>{{ img.replace('_',' ').replace('.png','').title() }}</figcaption></figure>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="notice">Matplotlib charts were not created yet. Run <code>python -m analysis.visualisations</code> in the terminal, then reload.</p>
+  {% endif %}
+</section>
+{% endblock %}
+{% block scripts %}<script>window.addEventListener("DOMContentLoaded", () => LS.initCharts());</script>{% endblock %}

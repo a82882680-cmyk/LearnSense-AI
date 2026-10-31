@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Student Data{% endblock %}
+{% block content %}
+<section class="page-head">
+  <p class="eyebrow">Page 3 &middot; Student Data</p>
+  <h1>Five simulated learners</h1>
+  <p class="lead">Search, filter and sort the sample records. Click <em>View</em> to see a student's indicators.</p>
+</section>
+<p class="data-banner">SIMULATED SAMPLE DATA &mdash; NOT REAL STUDENT RECORDS</p>
+
+<section class="card">
+  <div class="toolbar">
+    <label>Search
+      <input type="search" id="searchBox" placeholder="e.g. S03">
+    </label>
+    <label>Score band
+      <select id="bandFilter">
+        <option value="">All</option>
+        <option>75 and above</option>
+        <option>55 to 74</option>
+        <option>Below 55</option>
+      </select>
+    </label>
+    <label>Pattern
+      <select id="patternFilter">
+        <option value="">All</option>
+        <option value="gap">High activity, low quiz</option>
+        <option value="lowact">Attendance below 75%</option>
+        <option value="quizok">Quiz 7/10 or more</option>
+      </select>
+    </label>
+    <button class="btn small ghost" id="resetBtn" type="button">Reset</button>
+  </div>
+  <p class="muted" id="countText"></p>
+  <div class="table-wrap">
+  <table class="table sortable" id="studentTable">
+    <thead>
+      <tr>
+        <th data-key="student_id">Student</th>
+        <th data-key="attendance">Attendance</th>
+        <th data-key="assignment_completion">Assignments</th>
+        <th data-key="quiz_score">Quiz</th>
+        <th data-key="revision_sessions">Revision</th>
+        <th data-key="combined_score">Combined score</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  </div>
+  <p class="muted small">Click a column heading to sort. Click again to reverse.</p>
+</section>
+
+<section class="card detail" id="detailPanel" hidden>
+  <div class="detail-head">
+    <h2 id="detailTitle"></h2>
+    <button class="btn small ghost" id="closeDetail" type="button">Close</button>
+  </div>
+  <div id="detailBars"></div>
+  <p class="explain" id="detailNote"></p>
+</section>
+
+<section class="card">
+  <h2>Reading these records</h2>
+  <ul class="plain">
+    <li>Identifiers (S01 to S05) are made-up labels. No names or real identities are used.</li>
+    <li>Quiz and revision are out of 10. The combined score converts them to percentages first.</li>
+    <li>The combined score uses experimental weights ({{ (weights.attendance*100)|int }}% attendance, {{ (weights.quiz*100)|int }}% quiz, {{ (weights.revision*100)|int }}% revision, {{ (weights.assignment*100)|int }}% assignments) and is not a validated measure.</li>
+  </ul>
+</section>
+{% endblock %}
+{% block scripts %}
+<script id="studentData" type="application/json">{{ students|tojson }}</script>
+<script>window.addEventListener("DOMContentLoaded", () => LS.initStudents());</script>
+{% endblock %}

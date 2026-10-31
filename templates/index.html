@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Home Dashboard{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-main">
+    <p class="eyebrow">{{ project.domain }} &middot; {{ project.project_id }}</p>
+    <h1>Understand learning.<br>Detect friction.<br><span class="hl">Support progress.</span></h1>
+    <p class="lead">Welcome to <strong>{{ project.full_solution }}</strong>. This prototype studies
+      course activity, quiz scores and completion records, then suggests supportive next steps using
+      transparent rules.</p>
+    <div class="btn-row">
+      <a class="btn" href="{{ url_for('learnsense') }}">Try the LearnSense demo</a>
+      <a class="btn ghost" href="{{ url_for('charts') }}">See the charts</a>
+    </div>
+  </div>
+  <div class="hero-side">
+    <div class="card dark">
+      <p class="small-label">Average combined learning-progress score</p>
+      <p class="big-num">{{ stats.avg_combined }}<span>/100</span></p>
+      <p class="muted-light">Illustrative indicator calculated from {{ stats.total_learners }} simulated learners. Not a validated measure.</p>
+    </div>
+  </div>
+</section>
+
+<p class="data-banner">SIMULATED SAMPLE DATA &mdash; NOT REAL STUDENT RECORDS</p>
+
+<section class="stat-grid">
+  <div class="stat"><p class="small-label">Total simulated learners</p><p class="stat-num">{{ stats.total_learners }}</p></div>
+  <div class="stat"><p class="small-label">Average attendance</p><p class="stat-num">{{ stats.avg_attendance }}%</p></div>
+  <div class="stat"><p class="small-label">Average assignment completion</p><p class="stat-num">{{ stats.avg_assignment }}%</p></div>
+  <div class="stat"><p class="small-label">Average quiz score</p><p class="stat-num hi">{{ stats.avg_quiz_score }}<small>/10</small></p></div>
+  <div class="stat"><p class="small-label">Average revision completion</p><p class="stat-num">{{ stats.avg_revision_pct }}%</p></div>
+</section>
+
+<section class="grid-2 asym">
+  <div class="card">
+    <h2>Learning activity overview</h2>
+    <p class="muted">Class averages for each indicator, as percentages.</p>
+    <div class="chart-box"><canvas id="homeActivityChart"></canvas></div>
+  </div>
+  <div class="card">
+    <h2>Student performance comparison</h2>
+    <p class="muted">Combined learning-progress score for each simulated student.</p>
+    <div class="chart-box"><canvas id="homeCombinedChart"></canvas></div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Recent analytical insights</h2>
+  <p class="muted">Written automatically from the dataset by Python rules. They describe patterns and do not explain causes.</p>
+  <ul class="insights">
+    {% for i in insights %}
+    <li class="{{ 'flag' if i.flag }}"><h3>{{ i.title }}</h3><p>{{ i.text }}</p></li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}
+{% block scripts %}<script>window.addEventListener("DOMContentLoaded", () => LS.initHome());</script>{% endblock %}
